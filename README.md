@@ -1,4 +1,4 @@
-# Node.js-D
+# Node.js-A
 
 ### 📌 브랜치 규칙 및 네이밍 (Branch Rules & Naming)
 
