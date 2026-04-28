@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="0ec4e320-fc50-4c1c-b856-e820ab1d825a" name="@localhost Mapping">
+      <data-sources db="c82f2388-3c0e-4811-9a65-b3761d4f4625" />
+      <scope>
+        <node negative="1">
+          <node kind="database" negative="1" />
+          <node kind="schema">
+            <name qname="FinalUmc9th" />
+            <name qname="information_schema" />
+            <name qname="loopy" />
+            <name qname="mission_db" />
+            <name qname="mysql" />
+            <name qname="performance_schema" />
+            <name qname="symteo" />
+            <name qname="sys" />
+            <name qname="umc-niicka" />
+            <name qname="umc_8th" />
+            <name qname="umc_study" />
+          </node>
+        </node>
+      </scope>
+    </mapping>
+  </component>
+</project>
