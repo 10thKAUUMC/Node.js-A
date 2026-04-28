@@ -9,5 +9,8 @@ node_modules/
 .DS_Store
 **/.DS_Store
 
+# IDE 설정 파일
+.idea/
+
 # 빌드 결과물
 dist/
