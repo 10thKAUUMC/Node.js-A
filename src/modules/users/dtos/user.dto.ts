@@ -3,6 +3,7 @@ import { userInfo } from "os";
     // 1. 회원가입 요청 데이터의 설계도를 만듭니다.
 export interface UserSignUpRequest {
     email: string;
+    password: string;
     name: string;
     gender: string;
     birth: string;

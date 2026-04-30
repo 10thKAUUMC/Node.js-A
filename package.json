@@ -1,6 +1,6 @@
 {
   "name": "byo-umc",
-  "type": "module",
+  "type": "commonjs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,12 +16,15 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/kkyo1130/byo-umc/issues"
   },
   "homepage": "https://github.com/kkyo1130/byo-umc#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0"
   }
 }

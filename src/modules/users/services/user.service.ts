@@ -6,8 +6,12 @@ import {
   getUserPreferencesByUserId,
   setPreference,
 } from "../repositories/user.repository";
+import bcrypt from "bcrypt";
+
 
 export const userSignUp = async (data: UserSignUpRequest) => {
+  const hashing = await bcrypt.hash(data.password, 10); //bcrypt.hash('해싱할 문자', 숫자) 
+
   const joinUserId = await addUser({
     email: data.email,
     name: data.name,
@@ -16,6 +20,7 @@ export const userSignUp = async (data: UserSignUpRequest) => {
     address: data.address,
     detailAddress: data.detailAddress,
     phoneNumber: data.phoneNumber,
+    password: hashing,
   });
 
   if (joinUserId === null) {
