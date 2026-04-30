@@ -1,12 +1,13 @@
 {
   "name": "byo-umc",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsx src/index.ts",
-    "dev": "nodemon --exec tsx src/index.ts"
+    "dev": "nodemon --exec tsx src/index.ts",
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/kkyo1130/byo-umc/issues"
   },
-  "homepage": "https://github.com/kkyo1130/byo-umc#readme"
+  "homepage": "https://github.com/kkyo1130/byo-umc#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
