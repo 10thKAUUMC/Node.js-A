@@ -26,6 +26,24 @@ export const responseFromMission = (mission: any) => {
   };
 };
 
+export const responseFromMissions = (missions: any[]) => {
+  const lastMission = missions[missions.length - 1];
+  return {
+    data: missions.map((m) => ({
+      mission_id: m.id,
+      shop_id: m.shop_id,
+      title: m.title,
+      body: m.body,
+      point: m.point,
+      status: m.status,
+      created_date: m.created_date,
+    })),
+    pagination: {
+      cursor: lastMission ? lastMission.id : null,
+    },
+  };
+};
+
 export interface UserMissionCreateRequest {
   user_id: number;
   mission_id: number;
@@ -45,5 +63,24 @@ export const responseFromUserMission = (userMission: any) => {
     mission_id: userMission.mission_id,
     status: userMission.status,
     created_date: userMission.created_date,
+  };
+};
+
+export const responseFromInProgressMissions = (rows: any[]) => {
+  const lastRow = rows[rows.length - 1];
+  return {
+    data: rows.map((r) => ({
+      user_mission_id: r.user_mission_id,
+      mission_id: r.mission_id,
+      shop_id: r.shop_id,
+      title: r.title,
+      body: r.body,
+      point: r.point,
+      status: r.status,
+      created_date: r.created_date,
+    })),
+    pagination: {
+      cursor: lastRow ? lastRow.user_mission_id : null,
+    },
   };
 };

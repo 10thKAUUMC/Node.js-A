@@ -1,8 +1,24 @@
-import mysql from "mysql2/promise";
 import dotenv from "dotenv";
+import "dotenv/config";
+import { PrismaClient } from "./generated/prisma/client.js";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+
+const adapter = new PrismaMariaDb({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+  connectionLimit: 10,
+});
+
+export const prisma = new PrismaClient({
+  adapter,
+  log: ["query","info", "error", "warn"], // 쿼리 로그, 에러 로그, 경고 로그를 모두 출력하도록 설정
+});
 
 dotenv.config();
-
+/*
 export const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost", // mysql의 hostname
   user: process.env.DB_USER || "root", // user 이름
@@ -16,3 +32,4 @@ export const pool = mysql.createPool({
   connectionLimit: 10, // 몇 개의 커넥션을 가지게끔 할 것인지
   queueLimit: 0, // getConnection에서 오류가 발생하기 전에 Pool에 대기할 요청의 개수 한도
 });
+*/
