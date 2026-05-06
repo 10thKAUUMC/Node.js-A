@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import { handleUserSignUp } from "./modules/users/controllers/user.controller";
+import { handleCreateReview } from "./modules/reviews/controllers/review.controller";
+import { handleCreateMission } from "./modules/missions/controllers/mission.controller";
+import { handleListStoreReviews } from "./modules/stores/controllers/store.controller";
 
 // 1. 환경 변수 설정
 dotenv.config();
@@ -21,6 +24,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.post("/api/v1/users/signup", handleUserSignUp);
+app.post("/api/v1/reviews", handleCreateReview);
+app.post("/api/v1/missions", handleCreateMission)
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
 // 4. 서버 시작
 app.listen(port, () => {

@@ -1,11 +1,12 @@
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { pool } from "../../../db.config";
+import { prisma } from "../../../db.config.js";
 
 export const checkStore = async(storeId: number): Promise<boolean> => {
     const conn = await pool.getConnection();
     try {
         const [rows] = await pool.query<RowDataPacket[]>(
-            `SELECT EXISTS(SELECT 1 FROM store WHERE id = ?)`,
+            `SELECT EXISTS(SELECT 1 FROM store WHERE id = ?) as isExistStore`,
             [storeId]
         );
         return rows[0]?.isExistStore == 1;
@@ -48,3 +49,11 @@ export const getStore = async(storeId: any) => {
         conn.release();
     }
 }
+
+// 목록 조회
+export const getReviews = async(storeId: any) => {
+    const reviews = await getReviewbyStoreId(storeId);
+    return reviews;
+}
+
+export const preview

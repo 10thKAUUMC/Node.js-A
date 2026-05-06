@@ -7,7 +7,23 @@ import {
   setPreference,
 } from "../repositories/user.repository";
 import bcrypt from "bcrypt";
+import { getUserReviews } from "../repositories/user.repository";
 
+//사용자 리뷰 리스트
+export const listUserReviews = async (userId: number, cursor: number) => {
+  const reviews = await getUserReviews(userId, cursor);
+  
+  // 응답 데이터 가공 (DTO 함수 활용)
+  return {
+    reviews: reviews.map(review => ({
+      id: review.id,
+      storeName: review.store.name,
+      content: review.content,
+      // 필요한 다른 필드들...
+    })),
+    cursor: reviews.length > 0 ? reviews[reviews.length - 1]?.id : null,
+  };
+}
 
 export const userSignUp = async (data: UserSignUpRequest) => {
   console.log("전달 데이터:", data);

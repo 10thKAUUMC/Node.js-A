@@ -30,6 +30,7 @@ export const addMission = async (data: any): Promise<any> => {
                 data.storeId,
             ]
         );
+        return result.insertId;
     } catch (e) {
         throw new Error(`오류가 발생했어요: ${e}`);
     } finally {
@@ -45,6 +46,7 @@ export const getMission = async (missionId: any) => {
             `SELECT * FROM mission WHERE mission_id = ?`,
             [missionId]
         )
+        return rows[0];
     } catch(e) {
         throw new Error(`오류가 발생했어요: ${e}`);
     } finally {

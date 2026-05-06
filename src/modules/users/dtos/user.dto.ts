@@ -29,17 +29,13 @@ export const bodyToUser = (body: UserSignUpRequest) => {
         preferences: body.preferences,// 필수 
     };
 };
-export const responseFromUser = ({user, preferences}: {user: any, preferences: any}) => {
-    const birth = new Date(user.birth); //날짜 변환
+export const responseFromUser= (data: {user:any, preferences: any[]}): UserSignUpResponse => {
+    const perferCategory= data.preferences.map((p)=>p.foodCategory.name);
+
     return {
-        email: user.email, //필수 
-        name: user.name, // 필수
-        password: user.password, // 필수
-        gender: user.gender, // 필수
-        birth, // 필수
-        address: user.address || "", //선택 
-        detailAddress: user.detailAddress || "", //선택 
-        phoneNumber: user.phoneNumber,//필수
-        preferences: user.preferences,// 필수 
-    };
-};
+        email: data.user.email,
+        name: data.user.name,
+        preferCategory: perferCategory,
+    }
+
+}
