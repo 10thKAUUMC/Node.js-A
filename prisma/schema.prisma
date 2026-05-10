@@ -10,7 +10,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
- 
 }
 
 model User {
@@ -24,7 +23,8 @@ model User {
   phoneNumber   String   @map("phone_number") @db.VarChar(15)
 
   userFavorCategories UserFavorCategory[]
-  reviews UserStoreReview[]
+  reviews             UserStoreReview[]
+  userMission         UserMission[]
 
   @@map("user")
 }
@@ -51,38 +51,57 @@ model UserFavorCategory {
 }
 
 model UserStoreReview {
-  id        Int      @id @default(autoincrement())
-  content   String   @db.Text
-  
+  id      Int    @id @default(autoincrement())
+  content String @db.Text
+
   // 외래 키 필드 (DB 컬럼)
   //에서 where 절에 사용된 storeId와 일치해야 합니다.
-  storeId   Int      @map("store_id") 
-  userId    Int      @map("user_id")
+  storeId Int @map("store_id")
+  userId  Int @map("user_id")
 
   // 관계 설정 (Prisma Client에서 객체로 접근하기 위함)
   //의 select 로직에서 store와 user 정보를 가져오기 위해 필수입니다.
-  store     Store    @relation(fields: [storeId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  store Store @relation(fields: [storeId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
 
   @@map("user_store_review") // 실제 DB 테이블명
 }
 
 // 관계된 모델 예시
 model Store {
-  id      Int               @id @default(autoincrement())
-  name    String
-  reviews UserStoreReview[]
-  missions Mission[] 
+  id       Int               @id @default(autoincrement())
+  name     String
+  reviews  UserStoreReview[]
+  missions Mission[]
 }
 
 model Mission {
-  id        Int    @id @default(autoincrement())
-  content   String
-  deadline  DateTime
-  
-  // 외래 키 및 관계 설정
-  storeId   Int    @map("store_id")
-  store     Store  @relation(fields: [storeId], references: [id])
+  id          Int      @id @default(autoincrement())
+  title       String   // 추가
+  description String?  // 추가 (선택 사항일 경우 ? 유지)
+  point       Int      @default(0) // 추가
+  deadline    DateTime // 기존 필수 필드
+
+  // 관계 설정
+  storeId     Int           @map("store_id")
+  store       Store         @relation(fields: [storeId], references: [id])
+  userMission UserMission[]
 
   @@map("mission")
+}
+
+model UserMission {
+  id        Int      @id @default(autoincrement())
+  userId    Int // 어떤 유저가
+  missionId Int // 어떤 미션을 하는가
+  status    String // 상태 (예: 'CHALLENGING', 'COMPLETE', 'FAILED')
+  content   String? // 인증 내용이나 소감 (선택사항)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 관계 설정 (DB 외래키)
+  user    User    @relation(fields: [userId], references: [id])
+  mission Mission @relation(fields: [missionId], references: [id])
+
+  @@map("user_mission") // 실제 DB 테이블 이름
 }

@@ -1,8 +1,20 @@
-import { bodyToMission, responseFromMission } from "../dtos/mission.dto";
+import { 
+    bodyToMission,
+    responseFromMission,
+    responseFromInProgressMissions,
+    responseFromMissions,
+    responseFromUserMission,
+
+ } from "../dtos/mission.dto";
 import {
     checkStore,
     addMission,
     getMission,
+    checkUserMissionstatus,
+    getUserMission,
+    getInProgressMissions,
+    adduserMission,
+    updateUserMissionStatus,
 } from "../repositories/mission.repository";
 
 //가게에 미션 추가
@@ -18,3 +30,17 @@ export const createMission = async(data: ReturnType<typeof bodyToMission>) => {
     const mission = await getMission(missionId);
     return responseFromMission(mission);
 }
+
+export const listMyInProgressMissions = async (userId: number, cursor?: number) => {
+    const pageSize = 10;
+    const missions = await getInProgressMissions(userId, cursor || null, pageSize);
+    return responseFromInProgressMissions(missions);
+};
+
+export const processMissionCompletion = async (userMissionId: number) => {
+    // 1. 상태 변경
+    const updated = await updateUserMissionStatus(userMissionId, "completed");
+    const mission = await getMission(updated.missionId);
+    
+    return updated;
+};
