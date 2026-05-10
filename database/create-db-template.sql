@@ -92,3 +92,9 @@ INSERT INTO region (name) VALUES ('서울');
 
 -- 2. 생성된 ID 확인 (보통 1번이 됩니다)
 SELECT * FROM region;
+
+-- 1. 테스트용 사용자 생성
+INSERT INTO member (name, email) VALUES ('홍길동', 'test@gmail.com');
+
+-- 2. 생성된 사용자의 id 확인 (보통 1번일 겁니다)
+SELECT * FROM member;
