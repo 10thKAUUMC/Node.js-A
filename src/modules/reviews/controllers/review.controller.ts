@@ -8,7 +8,7 @@ export const handleCreateReview = async (req: Request, res: Response) => {
     console.log("리뷰 생성을 요청했습니다!");
     console.log("body:", req.body);
     try {
-        const review = await createReview(bodyToReview(req.body as ReviewCreateRequest));
+        const review = await createReview(req.body);
 
         res.status(StatusCodes.OK).json({ result: "리뷰 생성 성공!" });
     } catch (e) {

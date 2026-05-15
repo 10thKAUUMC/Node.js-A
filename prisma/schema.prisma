@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -17,6 +12,7 @@ model User {
   email         String   @unique(map: "email") @db.VarChar(255)
   name          String   @db.VarChar(100)
   gender        String   @db.VarChar(15)
+  password      String
   birth         DateTime @db.Date
   address       String   @db.VarChar(255)
   detailAddress String?  @map("detail_address") @db.VarChar(255)
@@ -40,10 +36,10 @@ model FoodCategory {
 
 model UserFavorCategory {
   id             Int          @id @default(autoincrement())
-  user           User         @relation(fields: [userId], references: [id])
-  userId         Int          @map("user_id")
-  foodCategory   FoodCategory @relation(fields: [foodCategoryId], references: [id])
-  foodCategoryId Int          @map("food_category_id")
+  user           User?        @relation(fields: [userId], references: [id])
+  userId         Int?         @map("user_id")
+  foodCategory   FoodCategory? @relation(fields: [foodCategoryId], references: [id])
+  foodCategoryId Int?         @map("food_category_id")
 
   @@index([foodCategoryId], map: "f_category_id")
   @@index([userId], map: "user_id")
@@ -53,36 +49,33 @@ model UserFavorCategory {
 model UserStoreReview {
   id      Int    @id @default(autoincrement())
   content String @db.Text
+  star    Int    @default(0)
 
-  // 외래 키 필드 (DB 컬럼)
-  //에서 where 절에 사용된 storeId와 일치해야 합니다.
   storeId Int @map("store_id")
   userId  Int @map("user_id")
 
-  // 관계 설정 (Prisma Client에서 객체로 접근하기 위함)
-  //의 select 로직에서 store와 user 정보를 가져오기 위해 필수입니다.
   store Store @relation(fields: [storeId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
 
-  @@map("user_store_review") // 실제 DB 테이블명
+  @@map("user_store_review")
 }
 
-// 관계된 모델 예시
 model Store {
   id       Int               @id @default(autoincrement())
-  name     String
+  name     String            @db.VarChar(100)
   reviews  UserStoreReview[]
   missions Mission[]
+
+  @@map("store")
 }
 
 model Mission {
   id          Int      @id @default(autoincrement())
-  title       String   // 추가
-  description String?  // 추가 (선택 사항일 경우 ? 유지)
-  point       Int      @default(0) // 추가
-  deadline    DateTime // 기존 필수 필드
+  title       String   @db.VarChar(100)
+  description String?  @db.Text
+  point       Int      @default(0)
+  deadline    DateTime @db.Date
 
-  // 관계 설정
   storeId     Int           @map("store_id")
   store       Store         @relation(fields: [storeId], references: [id])
   userMission UserMission[]
@@ -92,16 +85,15 @@ model Mission {
 
 model UserMission {
   id        Int      @id @default(autoincrement())
-  userId    Int // 어떤 유저가
-  missionId Int // 어떤 미션을 하는가
-  status    String // 상태 (예: 'CHALLENGING', 'COMPLETE', 'FAILED')
-  content   String? // 인증 내용이나 소감 (선택사항)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId    Int      @map("user_id")
+  missionId Int      @map("mission_id")
+  status    String   @db.VarChar(20)
+  content   String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  // 관계 설정 (DB 외래키)
   user    User    @relation(fields: [userId], references: [id])
   mission Mission @relation(fields: [missionId], references: [id])
 
-  @@map("user_mission") // 실제 DB 테이블 이름
+  @@map("user_mission")
 }

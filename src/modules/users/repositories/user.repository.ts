@@ -1,5 +1,3 @@
-import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { pool } from "../../../db.config";
 import { prisma } from "../../../db.config.js";
 
 // 1. User 데이터 삽입
@@ -11,12 +9,18 @@ export const addUser = async (data: any) => {
   if (user) {
     return null;
   }
+  const gender: Record<string, string> = {
+    "여성" : "여성",
+    "남성" : "남성",
+  };
+  const useGender = gender[data.user_gender] ?? "없음";
 
   // 2. 새로운 유저 생성
   const created = await prisma.user.create({ 
     data: {
       email: data.email,
       name: data.name,
+      password: data.password,
       gender: data.gender,
       birth: data.birth,
       address: data.address,

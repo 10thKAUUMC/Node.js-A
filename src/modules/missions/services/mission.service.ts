@@ -37,10 +37,20 @@ export const listMyInProgressMissions = async (userId: number, cursor?: number) 
     return responseFromInProgressMissions(missions);
 };
 
+export const createUserMission = async (userId: number, missionId: number) => {
+    const isAlreadyInProgress = await checkUserMissionstatus(userId, missionId);
+    if (isAlreadyInProgress) {
+        throw new Error("이미 진행 중인 미션입니다.");
+    }
+
+    const userMissionId = await adduserMission({ userId, missionId });
+    const userMission = await getUserMission(userMissionId);
+    return responseFromUserMission(userMission);
+};
+
 export const processMissionCompletion = async (userMissionId: number) => {
-    // 1. 상태 변경
+    // 상태 변경
     const updated = await updateUserMissionStatus(userMissionId, "completed");
-    const mission = await getMission(updated.missionId);
     
-    return updated;
+    return responseFromUserMission(updated);
 };

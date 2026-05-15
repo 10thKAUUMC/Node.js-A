@@ -5,9 +5,43 @@ export interface MissionCreateRequest {
     point: number;
 }
 
+export interface MissionCreateResponse {
+    title: string;
+    description: string;
+    storeId: number;
+    missionId: number;
+    point: number;
+    deadline: Date | null;
+}
+
+export interface InProgressMissionResponse {
+    userMissionId: number;
+    missionId: number;
+    status: string;
+    createdAt: Date;
+    title: string;
+    description: string;
+    point: number;
+    storeId: number;
+}
+
+export interface InProgressMissionListResponse {
+    data: InProgressMissionResponse[];
+    pagination: {
+        cursor: number | null;
+    };
+}
+
 export interface UserMissionCreateRequest {
-    user_id: number;
-    mission_id: number;
+    userId: number;
+    missionId: number;
+}
+
+export interface UserMissionCreateResponse {
+    userId: number;
+    missionId: number;
+    userMissionId: number;
+    status: string;
 }
 
 export const bodyToMission = (body: MissionCreateRequest) => {
@@ -19,14 +53,14 @@ export const bodyToMission = (body: MissionCreateRequest) => {
     };
 }
 
-export const responseFromMission = (mission: any) => {
+export const responseFromMission = (mission: any): MissionCreateResponse => {
     return {
         title: mission.title,
         description: mission.description,
-        storeId: mission.store_id,
-        missionId: mission.mission_id,
+        storeId: mission.storeId,
+        missionId: mission.id,
         point: mission.point,
-        status: mission.status,
+        deadline: mission.deadline,
     };
 }
 
@@ -39,24 +73,24 @@ export const bodyToUserMission = (body: any) => {
 
 export const responseFromUserMission = (userMission: any) => {
     return {
-        userId: userMission.user_id,
-        missionId: userMission.mission_id,
-        userMissionId: userMission.user_mission_id,
+        userId: userMission.userId,
+        missionId: userMission.missionId,
+        userMissionId: userMission.id,
         status: userMission.status,
     };
 }
 
 //미션 리스트 응답 (+커서 페이지네이션)
-export const responseFromMissions = (missions: any[], page: number, pageSize: number) => {
-    const lastMissionId = missions.length > 0 ? missions[missions.length - 1].mission_id : null;
+export const responseFromMissions = (missions: any[]) => {
+    const lastMissionId = missions.length > 0 ? missions[missions.length - 1].id : null;
     return {
         data: missions.map(mission => ({
             title: mission.title,
             description: mission.description,
-            storeId: mission.store_id,
-            missionId: mission.mission_id,
+            storeId: mission.storeId,
+            missionId: mission.id,
             point: mission.point,
-            status: mission.status,
+            deadline: mission.deadline,
     })),
     pagination: {
         cursor: lastMissionId,
@@ -65,20 +99,23 @@ export const responseFromMissions = (missions: any[], page: number, pageSize: nu
 }
 
 //진행 중인 미션 리스트 응답
-export const responseFromInProgressMissions = (missions: any[]) => {
-    const lastUserMissionId = missions.length > 0 ? missions[missions.length - 1].mission_id : null;
+export const responseFromInProgressMissions = (userMissions: any[]): InProgressMissionListResponse => {
+    const lastUserMissionId = userMissions.length > 0 ? userMissions[userMissions.length - 1].id : null;
     return {
-        data: missions.map(mission => ({
-            title: mission.title,
-            description: mission.description,
-            storeId: mission.store_id,
-            userMissionId: mission.user_mission_id,
-            missionId: mission.mission_id,
-            point: mission.point,
-            status: mission.status,
+        data: userMissions.map(um => ({
+            userMissionId: um.id,
+            missionId: um.missionId,
+            status: um.status,
+            createdAt: um.createdAt,
+            // include: { mission: true } 로 가져온 데이터 매핑
+            title: um.mission?.title,
+            description: um.mission?.description,
+            point: um.mission?.point,
+            storeId: um.mission?.storeId,
         })),
         pagination: {
             cursor: lastUserMissionId,
         },
     };
 };
+

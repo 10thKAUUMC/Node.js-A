@@ -1,6 +1,7 @@
-import { userInfo } from "os";
+import { setPreference } from "../repositories/user.repository";
 
-    // 1. 회원가입 요청 데이터의 설계도를 만듭니다.
+// 1. 회원가입 요청 데이터의 설계도를 만듭니다.
+//요청 dto
 export interface UserSignUpRequest {
     email: string;
     password: string;
@@ -11,6 +12,11 @@ export interface UserSignUpRequest {
     detailAddress?: string;
     phoneNumber: string;
     preferences: number[];
+}
+//응답 dto
+export interface UserSignUpResponse {
+    userId: number;
+    preferences: string[];
 }
   
   // 2. 요청받은 데이터를 우리 시스템에 맞는 데이터로 변환해주는 함수입니다. 
@@ -33,9 +39,8 @@ export const responseFromUser= (data: {user:any, preferences: any[]}): UserSignU
     const perferCategory= data.preferences.map((p)=>p.foodCategory.name);
 
     return {
-        email: data.user.email,
-        name: data.user.name,
-        preferCategory: perferCategory,
+        userId: data.user.id,
+        preferences: perferCategory,
     }
 
 }
