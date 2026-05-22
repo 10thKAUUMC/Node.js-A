@@ -7,11 +7,18 @@ export interface MissionCreateRequest {
 
 export interface MissionCreateResponse {
     title: string;
-    description: string;
+    description: string | null;
     storeId: number;
     missionId: number;
     point: number;
     deadline: Date | null;
+}
+
+export interface MissionListResponse {
+    data: MissionCreateResponse[];
+    pagination: {
+        cursor: number | null;
+    };
 }
 
 export interface InProgressMissionResponse {

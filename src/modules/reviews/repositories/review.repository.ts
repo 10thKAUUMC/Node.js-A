@@ -1,4 +1,5 @@
 import { prisma } from "../../../db.config.js";
+import { InternalServerError } from "../../../common/errors/error";
 
 export const checkStore = async (storeId: number): Promise<boolean> => {
     try {
@@ -7,7 +8,7 @@ export const checkStore = async (storeId: number): Promise<boolean> => {
         });
         return count > 0;
     } catch (e) {
-        throw new Error(`오류가 발생했어요: ${e}`);
+        throw new InternalServerError(`오류가 발생했어요: ${e}`);
     }
 }
 
@@ -23,7 +24,7 @@ export const addReview = async (data: any): Promise<number> => {
         });
         return review.id;
     } catch (e) {
-        throw new Error(`오류가 발생했어요: ${e}`);
+        throw new InternalServerError(`오류가 발생했어요: ${e}`);
     }
 }
 
@@ -34,7 +35,7 @@ export const getReview = async (reviewId: number) => {
         });
         return review;
     } catch (e) {
-        throw new Error(`오류가 발생했어요: ${e}`);
+        throw new InternalServerError(`오류가 발생했어요: ${e}`);
     }
 }
 
@@ -55,7 +56,7 @@ export const getReviewbyStoreId = async (storeId: number, cursor: number = 0) =>
         });
         return reviews;
     } catch (e) {
-        throw new Error(`오류가 발생했어요: ${e}`);
+        throw new InternalServerError(`오류가 발생했어요: ${e}`);
     }
 }
 

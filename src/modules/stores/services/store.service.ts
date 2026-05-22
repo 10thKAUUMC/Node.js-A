@@ -12,7 +12,14 @@ export const listStoreReviews = async (
 export const listStoreMissions = async (storeId: number, cursor: number) => {
     const missions = await getMissionsByStoreIdWithCursor(storeId, cursor);
     return {
-        data: missions,
+        data: missions.map(m => ({
+            title: m.title,
+            description: m.description,
+            storeId: m.storeId,
+            missionId: m.id,
+            point: m.point,
+            deadline: m.deadline
+        })),
         pagination: {
             cursor: missions.length > 0 ? (missions[missions.length - 1] as any).id : null,
         },

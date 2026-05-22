@@ -9,11 +9,6 @@ export const addUser = async (data: any) => {
   if (user) {
     return null;
   }
-  const gender: Record<string, string> = {
-    "여성" : "여성",
-    "남성" : "남성",
-  };
-  const useGender = gender[data.user_gender] ?? "없음";
 
   // 2. 새로운 유저 생성
   const created = await prisma.user.create({ 

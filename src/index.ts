@@ -1,15 +1,33 @@
 import dotenv from "dotenv";
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
-import morgan from "morgan"; // 추가
-import cookieParser from "cookie-parser"; // 추가
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import { RegisterRoutes } from "./generated/routes";
 import { AppError } from "./common/errors/app.error";
+import swaggerUi from "swagger-ui-express";
+import path from "path";
+import fs from "fs";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
+
+// Content Security Policy (CSP) 설정
+// 브라우저에서 localhost 연결이나 인라인 스크립트가 차단되는 문제를 해결합니다.
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; " +
+    "connect-src 'self' http://localhost:* ws://localhost:*; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data:; " +
+    "font-src 'self';"
+  );
+  next();
+});
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   (res as any).error = function ({ errorCode = null, message = null, data = null }) {
@@ -23,27 +41,33 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // 2. 미들웨어 설정
-app.use(morgan("dev"));               // HTTP 요청 로깅 (morgan)
-app.use(cors());                      // cors 방식 허용
-app.use(express.static('public'));    // 정적 파일 접근
-app.use(express.json());              // request의 본문을 json으로 해석할 수 있도록 함(JSON 형태의 요청 body를 파싱하기 위함)
-app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
-app.use(cookieParser());              // req.cookies 사용 (cookie-parser)
+app.use(morgan("dev"));
+app.use(cors());
+app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-// Express.js에 생성한 엔드 포인트들을 register
+// TSOA Routes 등록
 const router = express.Router();
 RegisterRoutes(router);
 app.use("/", router);
 
-function isAppError(err: unknown): err is AppError {
-  return err instanceof AppError;
+// Swagger UI 연결
+try {
+  const swaggerFile = JSON.parse(
+    fs.readFileSync(path.resolve("dist/swagger.json"), "utf8")
+  );
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+} catch (error) {
+  console.error("Swagger 파일을 읽어오는데 실패했습니다. 'npm run start'를 먼저 실행했는지 확인해주세요.");
 }
-// [추가] 전역 오류 처리 미들웨어 (가장 마지막에 위치)
+
+// 전역 오류 처리 미들웨어
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(err);
   }
-  // AppError인 경우 커스텀 데이터 사용, 아니면 일반 서버 에러 처리
   const statusCode = err instanceof AppError ? err.statusCode : 500;
   const errorCode = err instanceof AppError ? err.errorCode : "COMMON_001";
   const message = err.message || "서버 내부 오류가 발생했습니다.";
@@ -57,5 +81,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 // 4. 서버 시작
 app.listen(port, () => {
-  console.log(`[server]: Server is running at <http://localhost>:${port}`);
+  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: API Documentation is available at http://localhost:${port}/docs`);
 });

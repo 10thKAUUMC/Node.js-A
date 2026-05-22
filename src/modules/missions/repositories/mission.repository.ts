@@ -1,5 +1,5 @@
-import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { prisma } from "../../../db.config";
+import { InternalServerError } from "../../../common/errors/error"
 
 //mission을 넣을 가게 존재 여부
 export const checkStore = async(storeId: number): Promise<boolean> => {
@@ -73,7 +73,7 @@ export const adduserMission = async (data:
     {
     userId: number;
     missionId: number;
-    }): Promise<any> => {
+    }): Promise<number> => {
     try {
         const create = await prisma.userMission.create(
             {
@@ -84,8 +84,9 @@ export const adduserMission = async (data:
                 }
             }
         )
+        return create.id;
     } catch(e) {
-        throw new Error(`미션 삽입 오류: ${e}`);
+        throw new InternalServerError(`미션 삽입 오류: ${e}`);
     }
 }
 
@@ -138,6 +139,6 @@ export const updateUserMissionStatus = async (userMissionId: number, status: str
         )
         return updated;
     } catch(e) {
-        throw new Error(`미션 상태 업데이트 오류: ${e}`);
+        throw new InternalServerError(`미션 상태 업데이트 오류: ${e}`);
     }
 }

@@ -1,4 +1,14 @@
-import { setPreference } from "../repositories/user.repository";
+export interface UserReviewItem {
+    id: number;
+    storeName: string;
+    content: string;
+    star: number;
+}
+
+export interface UserReviewListResponse {
+    reviews: UserReviewItem[];
+    cursor: number | null;
+}
 
 // 1. 회원가입 요청 데이터의 설계도를 만듭니다.
 //요청 dto

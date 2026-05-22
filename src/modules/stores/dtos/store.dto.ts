@@ -1,3 +1,5 @@
+import { MissionCreateResponse } from "../../missions/dtos/mission.dto";
+
 export interface ReviewItem {
     id: number;
     content: string;
@@ -17,6 +19,13 @@ export interface ReviewItem {
       cursor: number | null;
     };
   }
+
+export interface MissionListResponse {
+    data: MissionCreateResponse[];
+    pagination: {
+        cursor: number | null;
+    };
+}
 
 
 export const responseFromReviews = (

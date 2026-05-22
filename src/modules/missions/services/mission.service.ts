@@ -16,13 +16,14 @@ import {
     adduserMission,
     updateUserMissionStatus,
 } from "../repositories/mission.repository";
+import { StoreNotFoundError, MissionAlreadyInProgressError } from "../../../common/errors/error";
 
 //가게에 미션 추가
 export const createMission = async(data: ReturnType<typeof bodyToMission>) => {
     //가계 존재 여부 확인
     const checkStoreExist = await checkStore(data.storeId);
     if (!checkStoreExist) {
-        throw new Error("존재하지 않는 가게입니다.");
+        throw new StoreNotFoundError("존재하지 않는 가게입니다.");
     }
     const missionId = await addMission(data);
     
@@ -40,7 +41,7 @@ export const listMyInProgressMissions = async (userId: number, cursor?: number) 
 export const createUserMission = async (userId: number, missionId: number) => {
     const isAlreadyInProgress = await checkUserMissionstatus(userId, missionId);
     if (isAlreadyInProgress) {
-        throw new Error("이미 진행 중인 미션입니다.");
+        throw new MissionAlreadyInProgressError("이미 진행 중인 미션입니다.");
     }
 
     const userMissionId = await adduserMission({ userId, missionId });

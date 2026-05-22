@@ -8,7 +8,7 @@ import {
 } from "../repositories/user.repository";
 import bcrypt from "bcrypt";
 import { getUserReviews } from "../repositories/user.repository";
-import { DuplicateUserEmailError } from "../../../common/errors/error.js";
+import { DuplicateUserEmailError, ValidationError } from "../../../common/errors/error.js";
 
 //사용자 리뷰 리스트
 export const listUserReviews = async (userId: number, cursor: number) => {
@@ -21,7 +21,7 @@ export const listUserReviews = async (userId: number, cursor: number) => {
       content: review.content,
       star: review.star,
     })),
-    cursor: reviews.length > 0 ? reviews[reviews.length - 1]?.id : null,
+    cursor: reviews.length > 0 ? (reviews[reviews.length - 1]?.id ?? null) : null,
   };
 }
 
@@ -29,7 +29,7 @@ export const userSignUp = async (data: UserSignUpRequest): Promise<UserSignUpRes
   console.log("전달 데이터:", data);
   if (!data || !data.password) {
     console.error("비밀번호가 데이터에 포함되어 있지 않습니다!");
-    throw new Error("비밀번호가 누락되었습니다.");
+    throw new ValidationError("비밀번호가 누락되었습니다.");
   }
 
   const hashing = await bcrypt.hash(data.password, 10); //bcrypt.hash('해싱할 문자', 숫자) 
